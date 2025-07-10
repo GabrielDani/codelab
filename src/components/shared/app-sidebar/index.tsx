@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ComponentProps } from "react";
 import Logo from "@/assets/logo.svg";
 import LogoIcon from "@/assets/logo-icon.svg";
+import { NavItems } from "./nav-items";
 
 type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
@@ -21,7 +22,9 @@ export const AppSidebar = ({ ...props }: AppSidebarProps) => {
           <LogoIcon className="w-full max-w-[150px] mx-auto pt-3 hidden group-data-[state=collapsed]:block" />
         </Link>
       </SidebarHeader>
-      <SidebarContent>{/* NAV ITEMS */}</SidebarContent>
+      <SidebarContent>
+        <NavItems />
+      </SidebarContent>
       <SidebarFooter>{/* NAV USER */}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
