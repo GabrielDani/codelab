@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="overflow-auto">
         <header className="flex h-[70px] shrink-0 border-b items-center px-6 justify-between gap-2">
           <div className="flex-1 flex items-center gap-4">
             <SidebarTrigger className="flex md:hidden -ml-1" />
@@ -37,9 +37,7 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
           )}
         </header>
-        <div className="flex flex-1 flex-col gap-6 p-6 overflow-auto">
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-6 p-6">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
