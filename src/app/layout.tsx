@@ -21,15 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      localization={ptBR}
-      appearance={{ variables: { colorPrimary: "hsl(160 100% 37%)" } }}
-    >
-      <html lang="pt-br" suppressHydrationWarning>
-        <body className={cn(nunito.variable, "antialiased font-sans dark")}>
+    <html lang="pt-br" suppressHydrationWarning>
+      <body className={cn(nunito.variable, "antialiased font-sans dark")}>
+        <ClerkProvider
+          localization={ptBR}
+          appearance={{ variables: { colorPrimary: "hsl(160 100% 37%)" } }}
+        >
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
