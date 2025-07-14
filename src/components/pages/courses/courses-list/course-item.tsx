@@ -11,7 +11,7 @@ export const CourseItem = ({ course }: CourseItemProps) => {
   return (
     <Link
       className="border rounded-lg bg-card overflow-hidden hover:border-primary transition-all"
-      href={`couses/details/${course.slug}`}
+      href={`courses/details/${course.slug}`}
     >
       <Image
         src={course.thumbnail}
