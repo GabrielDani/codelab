@@ -9,7 +9,10 @@ type CourseItemProps = {
 
 export const CourseItem = ({ course }: CourseItemProps) => {
   return (
-    <Link className="" href={`couses/details/${course.slug}`}>
+    <Link
+      className="border rounded-lg bg-card overflow-hidden hover:border-primary transition-all"
+      href={`couses/details/${course.slug}`}
+    >
       <Image
         src={course.thumbnail}
         alt={`Thumbnail do curso ${course.title}`}
@@ -27,6 +30,15 @@ export const CourseItem = ({ course }: CourseItemProps) => {
             <Bookmark size={14} />
             {course.modules.length} Módulos
           </Badge>
+          {course.tags.map((tag) => (
+            <Badge
+              key={`${course.id}-${tag.id}`}
+              variant={"outline"}
+              className="max-w-max"
+            >
+              {tag.name}
+            </Badge>
+          ))}
         </div>
       </div>
     </Link>
