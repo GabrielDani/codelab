@@ -7,3 +7,7 @@ type CourseWithTagsAndModules = Course & {
   tags: CourseTag[];
   modules: CourseModule[];
 };
+
+type CourseModulesWithLessons = CourseModule & {
+  lessons: CourseLesson[];
+};
