@@ -8,9 +8,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -19,14 +22,29 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const { user } = useUser();
 
+  const pathname = usePathname();
+
+  const isHomePage = pathname === "/";
+
+  const isCoursePage = /^\/courses\/(?!details\/).+/.test(pathname);
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset className="overflow-auto">
-        <header className="flex h-[70px] shrink-0 border-b items-center px-6 justify-between gap-2">
+        <header
+          className={cn(
+            "flex h-[70px] shrink-0 border-b items-center px-6 justify-between gap-2",
+            !isHomePage && "md:hidden"
+          )}
+        >
           <div className="flex-1 flex items-center gap-4">
             <SidebarTrigger className="flex md:hidden -ml-1" />
-            <SearchInput />
+            {isHomePage && (
+              <Suspense>
+                <SearchInput />
+              </Suspense>
+            )}
           </div>
           {!user && (
             <Link href="/auth/sign-in">
@@ -37,7 +55,14 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
           )}
         </header>
-        <div className="flex flex-1 flex-col gap-6 p-6">{children}</div>
+        <div
+          className={cn(
+            "flex flex-1 flex-col gap-6 p-6",
+            isCoursePage && "p-0"
+          )}
+        >
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
