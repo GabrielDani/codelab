@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ptBR } from "@clerk/localizations";
 
 import "@/styles/globals.css";
+import { ClientProviders } from "@/components/shared/client-providers";
 
 const nunito = Nunito({
   variable: "--font-sans",
@@ -21,15 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br" suppressHydrationWarning>
-      <body className={cn(nunito.variable, "antialiased font-sans dark")}>
-        <ClerkProvider
-          localization={ptBR}
-          appearance={{ variables: { colorPrimary: "hsl(160 100% 37%)" } }}
-        >
-          {children}
-        </ClerkProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      localization={ptBR}
+      appearance={{ variables: { colorPrimary: "hsl(160 100% 37%)" } }}
+    >
+      <html lang="pt-br" suppressHydrationWarning>
+        <body className={cn(nunito.variable, "antialiased font-sans dark")}>
+          <ClientProviders>{children}</ClientProviders>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
