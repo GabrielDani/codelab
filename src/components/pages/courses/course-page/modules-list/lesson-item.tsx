@@ -19,9 +19,10 @@ export const LessonItem = ({ lesson }: LesosnItemProps) => {
   const queryClient = useQueryClient();
 
   const courseSlug = params.slug as string;
+  const currentLessonId = params.lessonId as string;
+
   const lessonId = lesson.id;
   const completed = lesson.completed;
-  const currentLessonId = "";
 
   const PrimaryIcon = completed ? CircleCheckBig : Video;
   const SecondaryIcon = completed ? CircleX : CircleCheckBig;
@@ -57,7 +58,7 @@ export const LessonItem = ({ lesson }: LesosnItemProps) => {
         lesson.id === currentLessonId && "text-white",
         completed && "text-primary"
       )}
-      href={`/courses/course-slug/module-id/lesson/${lesson.id}`}
+      href={`/courses/${courseSlug}/${lesson.moduleId}/lesson/${lesson.id}`}
     >
       <Tooltip
         content={

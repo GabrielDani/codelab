@@ -12,3 +12,7 @@ type CourseWithTagsAndModules = Course & {
 type CourseModulesWithLessons = CourseModule & {
   lessons: CourseLesson[];
 };
+
+type CourseWithModulesAndLessons = Course & {
+  modules: CourseModulesWithLessons[];
+};
