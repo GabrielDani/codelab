@@ -62,7 +62,7 @@ export const LessonItem = ({ lesson }: LesosnItemProps) => {
     >
       <Tooltip
         content={
-          completed ? "Marcar como não assistido" : "Marcar como asisstido"
+          completed ? "Marcar como não assistido" : "Marcar como assistido"
         }
       >
         <button
