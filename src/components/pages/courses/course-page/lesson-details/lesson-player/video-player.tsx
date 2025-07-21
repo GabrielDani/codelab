@@ -10,9 +10,14 @@ import {
 type VideoPlayerProps = {
   videoId: string;
   autoplay?: boolean;
+  onEnd?: () => void;
 };
 
-const VideoPlayer = ({ videoId, autoplay = false }: VideoPlayerProps) => {
+const VideoPlayer = ({
+  videoId,
+  autoplay = false,
+  onEnd,
+}: VideoPlayerProps) => {
   const userAlreadyInteracted = navigator.userActivation.hasBeenActive;
 
   return (
@@ -20,6 +25,7 @@ const VideoPlayer = ({ videoId, autoplay = false }: VideoPlayerProps) => {
       title="Video da Aula"
       src={`youtube/${videoId}`}
       autoPlay={userAlreadyInteracted && autoplay}
+      onEnd={onEnd}
     >
       <MediaProvider />
       <PlyrLayout icons={plyrLayoutIcons} />
