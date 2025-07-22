@@ -14,7 +14,7 @@ type CourseProgressProps = {
 };
 
 export const CourseProgress = ({ course }: CourseProgressProps) => {
-  const hasCourse = true;
+  const hasCourse = false;
 
   const { data: courseProgress } = useQuery({
     queryKey: queryKeys.courseProgress(course.slug),
