@@ -1,5 +1,7 @@
 "use client";
 
+import "react-credit-cards-2/dist/es/styles-compiled.css";
+
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -79,7 +81,9 @@ CheckoutDialogProps) => {
             </div>
           )}
 
-          {step === 2 && paymentMethod === "CREDIT_CARD" && <CreditCardForm />}
+          {step === 2 && paymentMethod === "CREDIT_CARD" && (
+            <CreditCardForm onBack={() => setStep(1)} />
+          )}
           {step === 2 && paymentMethod === "PIX" && <>{/* PIX FORM */}</>}
         </div>
       }
