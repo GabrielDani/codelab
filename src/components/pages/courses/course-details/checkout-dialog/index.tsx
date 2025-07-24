@@ -20,8 +20,8 @@ type CheckoutDialogProps = {
 export const CheckoutDialog = ({
   open,
   setOpen,
-}: // course,
-CheckoutDialogProps) => {
+  course,
+}: CheckoutDialogProps) => {
   const [step, setStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CREDIT_CARD">(
     "PIX"
@@ -34,6 +34,11 @@ CheckoutDialogProps) => {
   };
 
   const handleBack = () => setStep(1);
+
+  const handleClose = () => {
+    setOpen(false);
+    setStep(1);
+  };
 
   const paymentsMethods = [
     {
@@ -88,7 +93,11 @@ CheckoutDialogProps) => {
             <CreditCardForm onBack={handleBack} />
           )}
           {step === 2 && paymentMethod === "PIX" && (
-            <PixForm onBack={handleBack} />
+            <PixForm
+              onBack={handleBack}
+              course={course}
+              onClose={handleClose}
+            />
           )}
         </div>
       }
