@@ -82,8 +82,8 @@ export const creditCardCheckoutFormSchema = z.object({
     .min(1, {
       message: "Selecione o número de parcelas.",
     })
-    .max(6, {
-      message: "O número máximo de parcelas é 6.",
+    .max(12, {
+      message: "O número máximo de parcelas é 12.",
     }),
 
   cpf: cpfSchema,
