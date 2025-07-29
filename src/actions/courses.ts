@@ -66,7 +66,7 @@ export const getCourse = async (
   return course;
 };
 
-export const getPurchasedCourses = async () => {
+export const getPurchasedCourses = async (detailed = false) => {
   const { userId } = await getUser(false);
   if (!userId) return [];
 
@@ -75,9 +75,22 @@ export const getPurchasedCourses = async () => {
       userId,
     },
     include: {
-      course: true,
+      course: detailed
+        ? {
+            include: {
+              tags: true,
+              modules: true,
+            },
+          }
+        : true,
     },
   });
 
   return purchasedCourses.map((purchase) => purchase.course);
+};
+
+export const getPurchasedCoursesWithDetails = async () => {
+  const purchasedCourses = await getPurchasedCourses(true);
+
+  return purchasedCourses as CourseWithTagsAndModules[];
 };
