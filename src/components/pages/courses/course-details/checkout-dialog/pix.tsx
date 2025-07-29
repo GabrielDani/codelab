@@ -58,6 +58,15 @@ export const PixForm = ({ onBack, onClose, course }: PixFormProps) => {
       setIsGenerating(false);
       setPixData(data);
     },
+    onError: (error) => {
+      if (error?.name === "CONFLICT") {
+        toast.error("Você já possui acesso a este curso!");
+        onClose();
+        return;
+      }
+      toast.error("Erro ao gerar QR Code. Tente novamente.");
+      onBack();
+    },
   });
 
   const { mutateAsync: handleGetStatus, isPending: isLoading } = useMutation({
