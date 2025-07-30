@@ -30,6 +30,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-input/mask": "^2.0.4",
     "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-table": "^8.21.3",
     "@vidstack/react": "^1.12.13",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
