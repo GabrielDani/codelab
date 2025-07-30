@@ -2,12 +2,16 @@
 
 import { createCourseTag, getCourseTags } from "@/actions/courses";
 import { BackButton } from "@/components/ui/back-button";
+import { Dropzone } from "@/components/ui/dropzone";
 import { FormField } from "@/components/ui/form/field";
 import { InputField } from "@/components/ui/form/input-field";
 import { Form } from "@/components/ui/form/primitives";
+import { SelectField } from "@/components/ui/form/select-field";
 import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import { Separator } from "@/components/ui/separator";
 import { queryKeys } from "@/constants/query-keys";
+import { CourseDifficulty } from "@/generated/prisma";
+import { formatDifficulty } from "@/lib/utils";
 import {
   CreateCourseFormData,
   createCourseSchema,
@@ -55,6 +59,21 @@ export const CourseForm = () => {
   const tagsOptions = useMemo(() => {
     return (tagsData ?? []).map((tag) => ({ label: tag.name, value: tag.id }));
   }, [tagsData]);
+
+  const difficultyOptions = [
+    {
+      label: formatDifficulty(CourseDifficulty.EASY),
+      value: CourseDifficulty.EASY,
+    },
+    {
+      label: formatDifficulty(CourseDifficulty.MEDIUM),
+      value: CourseDifficulty.MEDIUM,
+    },
+    {
+      label: formatDifficulty(CourseDifficulty.HARD),
+      value: CourseDifficulty.HARD,
+    },
+  ];
 
   const selectedTags = useMemo(() => {
     return tagsOptions.filter((tag) => tagIds.includes(tag.value));
@@ -122,6 +141,21 @@ export const CourseForm = () => {
                 onChange={(value) => handleChangeTags(value)}
                 disabled={isAddingTag}
               />
+            )}
+          </FormField>
+          <SelectField
+            name="difficulty"
+            label="Dificuldade"
+            options={difficultyOptions}
+            value={CourseDifficulty.EASY}
+          />
+          <FormField
+            name="thumbnail"
+            label="Capa do curso"
+            className="col-span-full"
+          >
+            {({ field }) => (
+              <Dropzone file={field.value} setFile={field.onChange} />
             )}
           </FormField>
         </form>
