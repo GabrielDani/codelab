@@ -5,18 +5,25 @@ import { CreateCourseFormData } from "@/server/schemas/course";
 import { GripVertical, Pen, Plus, Trash } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { ManageModuleDialog } from "./manage-module-dialog";
+import { ManageModuleDialog, ModuleFormItem } from "./manage-module-dialog";
 import { Tooltip } from "@/components/ui/tooltip";
+import { LessonsList } from "./lessons-list";
+import { ManageLessonDialog } from "./manage-lesson-dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 export const ModulesList = () => {
   const { control } = useFormContext<CreateCourseFormData>();
-  const { fields } = useFieldArray({
+
+  const [showManageModuleDialog, setShowManageModuleDialog] = useState(false);
+  const [moduleToEdit, setModuleToEdit] = useState<ModuleFormItem | null>(null);
+  const [showManageLessonDialog, setShowManageLessonDialog] = useState(false);
+  const [moduleIndex, setModuleIndex] = useState<number>(0);
+
+  const { fields, remove } = useFieldArray({
     control,
     name: "modules",
     keyName: "_id",
   });
-
-  const [showManageModuleDialog, setShowManageModuleDialog] = useState(false);
 
   return (
     <div className="col-span-full flex flex-col">
@@ -30,7 +37,7 @@ export const ModulesList = () => {
         </Button>
       </div>
       <div className="overflow-hidden flex flex-col gap-4 mt-6">
-        {fields.map((field) => (
+        {fields.map((field, index) => (
           <div
             key={field.id}
             className="w-full grid grid-cols-[40px_1fr] items-center bg-muted/50 rounded-md overflow-hidden border border-input"
@@ -48,22 +55,42 @@ export const ModulesList = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <Tooltip content="Editar módulo">
-                    <Button variant="outline" size="icon">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        setModuleToEdit(field);
+                        setShowManageModuleDialog(true);
+                      }}
+                    >
                       <Pen />
                     </Button>
                   </Tooltip>
-                  <Tooltip content="Excluir módulo">
-                    <Button variant="outline" size="icon">
-                      <Trash />
-                    </Button>
-                  </Tooltip>
-                  <Button variant="outline">
+                  <AlertDialog
+                    title="Excluir módulo"
+                    description="Tem certeza que deseja excluir esse módulo? Isso irá excluir todas as aulas deste módulo."
+                    onConfirm={() => remove(index)}
+                  >
+                    <Tooltip content="Excluir módulo">
+                      <Button variant="outline" size="icon">
+                        <Trash />
+                      </Button>
+                    </Tooltip>
+                  </AlertDialog>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setModuleIndex(index);
+                      setShowManageLessonDialog(true);
+                    }}
+                  >
                     Adicionar aula <Plus />
                   </Button>
                 </div>
               </div>
 
               {/* Lessons List */}
+              <LessonsList moduleIndex={index} />
             </div>
           </div>
         ))}
@@ -71,6 +98,13 @@ export const ModulesList = () => {
       <ManageModuleDialog
         open={showManageModuleDialog}
         setOpen={setShowManageModuleDialog}
+        initialData={moduleToEdit}
+        setInitialData={setModuleToEdit}
+      />
+      <ManageLessonDialog
+        open={showManageLessonDialog}
+        setOpen={() => setShowManageLessonDialog(false)}
+        moduleIndex={moduleIndex}
       />
     </div>
   );
