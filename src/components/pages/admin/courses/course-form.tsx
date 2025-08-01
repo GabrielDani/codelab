@@ -4,6 +4,7 @@ import {
   createCourse,
   createCourseTag,
   getCourseTags,
+  updateCourse,
 } from "@/actions/courses";
 import { BackButton } from "@/components/ui/back-button";
 import { Dropzone } from "@/components/ui/dropzone";
@@ -16,23 +17,37 @@ import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import { Separator } from "@/components/ui/separator";
 import { queryKeys } from "@/constants/query-keys";
 import { CourseDifficulty } from "@/generated/prisma";
-import { formatDifficulty } from "@/lib/utils";
+import { formatDifficulty, urlToFile } from "@/lib/utils";
 import {
   CreateCourseFormData,
   createCourseSchema,
 } from "@/server/schemas/course";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ModulesList } from "./modules-list";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-export const CourseForm = () => {
+type CourseFormInitialData = Omit<CreateCourseFormData, "thumbnail"> & {
+  thumbnailUrl: string;
+};
+
+type CourseFormProps = {
+  initialData?: CourseFormInitialData;
+};
+
+export const CourseForm = ({ initialData }: CourseFormProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const params = useParams();
+
+  const courseId = params.courseId as string;
+
+  const isEditing = !!initialData;
+  const [initialDataIsSet, setInitialDataIsSet] = useState(false);
 
   const form = useForm<CreateCourseFormData>({
     resolver: zodResolver(createCourseSchema),
@@ -49,14 +64,49 @@ export const CourseForm = () => {
     },
   });
 
-  const { handleSubmit, setValue, watch } = form;
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { dirtyFields },
+  } = form;
 
   const tagIds = watch("tagIds");
+
+  const setInitialData = useCallback(
+    async (data: CourseFormInitialData) => {
+      const thumbnailFile = await urlToFile(data.thumbnailUrl);
+
+      reset({ ...data, thumbnail: thumbnailFile });
+      setInitialDataIsSet(true);
+    },
+    [reset]
+  );
+
+  useEffect(() => {
+    if (initialData) {
+      setInitialData(initialData);
+    }
+  }, [initialData, setInitialData]);
 
   const { data: tagsData } = useQuery({
     queryKey: queryKeys.courseTags,
     queryFn: getCourseTags,
   });
+
+  const { mutate: handleUpdateCourse, isPending: isUpdatingCourse } =
+    useMutation({
+      mutationFn: async (data: CreateCourseFormData) => {
+        if (!initialData) return;
+
+        await updateCourse({
+          id: courseId,
+          ...data,
+          thumbnail: dirtyFields.thumbnail ? data.thumbnail : undefined,
+        });
+      },
+    });
 
   const { mutate: handleCreateTag, isPending: isAddingTag } = useMutation({
     mutationFn: createCourseTag,
@@ -134,6 +184,12 @@ export const CourseForm = () => {
       })),
     };
 
+    if (isEditing) {
+      handleUpdateCourse(dataWithOrder);
+
+      return;
+    }
+
     handleCreateCourse(dataWithOrder);
   };
 
@@ -141,9 +197,13 @@ export const CourseForm = () => {
     <>
       <BackButton />
       <div>
-        <h1 className="text-2xl font-bold">Criar Curso</h1>
+        <h1 className="text-2xl font-bold">
+          {isEditing ? "Editar Curso" : "Criar Curso"}
+        </h1>
         <p className="text-muted-foreground mt-2">
-          Preencha o formulário abaixo para adicionar um novo curso
+          {isEditing
+            ? "Edite o curso com as informações desejadas"
+            : "Preencha o formulário abaixo para adicionar um novo curso"}
         </p>
       </div>
       <Separator className="my-2" />
@@ -200,14 +260,21 @@ export const CourseForm = () => {
             className="col-span-full"
           >
             {({ field }) => (
-              <Editor value={field.value} onChange={field.onChange} />
+              <Editor
+                key={`editor-field-${initialDataIsSet}`}
+                value={field.value}
+                onChange={field.onChange}
+              />
             )}
           </FormField>
           <Separator className="my-2 col-span-full" />
           <ModulesList />
           <div className="col-span-full flex justify-end">
-            <Button type="submit" disabled={isCreatingCourse}>
-              Criar curso
+            <Button
+              type="submit"
+              disabled={isCreatingCourse || isUpdatingCourse}
+            >
+              {isEditing ? "Salvar alterações" : "Criar curso"}
             </Button>
           </div>
         </form>

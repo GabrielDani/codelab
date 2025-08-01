@@ -6,10 +6,12 @@ import { checkRole } from "@/lib/clerk";
 import {
   CreateCourseFormData,
   createCourseSchema,
+  UpdateCourseFormData,
+  updateCourseSchema,
 } from "@/server/schemas/course";
 import slugify from "slugify";
 import { revalidatePath } from "next/cache";
-import { uploadFile } from "./upload";
+import { deleteFile, uploadFile } from "./upload";
 
 type GetCoursesPayload = {
   query?: string;
@@ -204,4 +206,77 @@ export const createCourse = async (rawData: CreateCourseFormData) => {
 
   revalidatePath("/admin/courses");
   return course;
+};
+
+export const updateCourse = async (rawData: UpdateCourseFormData) => {
+  const isAdmin = await checkRole("admin");
+  if (!isAdmin) throw new Error("Unauthorized");
+
+  const data = updateCourseSchema.parse(rawData);
+
+  const course = await prisma.course.findUnique({
+    where: {
+      id: data.id,
+    },
+    include: {
+      tags: true,
+    },
+  });
+
+  if (!course) throw new Error("Course not found");
+
+  let slug = course.slug;
+  let thumbnailUrl = course.thumbnail;
+
+  if (course.title !== data.title) {
+    const rawSlug = slugify(data.title, {
+      lower: true,
+      strict: true,
+    });
+
+    const slugCount = await prisma.course.count({
+      where: {
+        slug: {
+          startsWith: rawSlug,
+        },
+      },
+    });
+
+    slug = slugCount > 0 ? `${rawSlug}-${slugCount + 1}` : rawSlug;
+  }
+
+  if (data.thumbnail) {
+    const { url: newThumbnailUrl } = await uploadFile({
+      file: data.thumbnail,
+      path: "courses-thumbnails",
+    });
+
+    thumbnailUrl = newThumbnailUrl;
+
+    await deleteFile(course.thumbnail);
+  }
+
+  const updatedCourse = await prisma.course.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      title: data.title,
+      shortDescription: data.shortDescription,
+      description: data.description,
+      price: data.price,
+      discountPrice: data.discountPrice,
+      difficulty: data.difficulty,
+      thumbnail: thumbnailUrl,
+      slug,
+      tags: {
+        set: data.tagIds.map((id) => ({ id })),
+      },
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin/courses");
+
+  return updatedCourse;
 };
