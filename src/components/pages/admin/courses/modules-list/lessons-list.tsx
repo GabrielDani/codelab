@@ -3,14 +3,17 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { CreateCourseFormData } from "@/server/schemas/course";
 import { GripVertical, Pencil, Trash } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { LessonFormItem } from "./manage-lesson-dialog";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 type LessonListProps = {
   moduleIndex: number;
+  onEditLesson: (lesson: LessonFormItem) => void;
 };
-export const LessonsList = ({ moduleIndex }: LessonListProps) => {
+export const LessonsList = ({ moduleIndex, onEditLesson }: LessonListProps) => {
   const { control } = useFormContext<CreateCourseFormData>();
 
-  const { fields } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control,
     name: `modules.${moduleIndex}.lessons`,
     keyName: "_id",
@@ -23,7 +26,7 @@ export const LessonsList = ({ moduleIndex }: LessonListProps) => {
         </p>
       )}
       <div className="overflow-hidden flex flex-col gap-2">
-        {fields.map((field) => (
+        {fields.map((field, index) => (
           <div
             key={field.id}
             className="w-full grid grid-cols-[30px_1fr] items-center bg-card/50 rounded-md overflow-hidden border border-input"
@@ -35,15 +38,25 @@ export const LessonsList = ({ moduleIndex }: LessonListProps) => {
               <p className="font-semibold">{field.title}</p>
               <div className="flex items-center gap-3">
                 <Tooltip content="Editar aula">
-                  <Button variant="outline" size="icon">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onEditLesson(field)}
+                  >
                     <Pencil />
                   </Button>
                 </Tooltip>
-                <Tooltip content="Excluir aula">
-                  <Button variant="outline" size="icon">
-                    <Trash />
-                  </Button>
-                </Tooltip>
+                <AlertDialog
+                  title="Excluir aula"
+                  description="Tem certeza que deseja excluir essa aula?"
+                  onConfirm={() => remove(index)}
+                >
+                  <Tooltip content="Excluir aula">
+                    <Button variant="outline" size="icon">
+                      <Trash />
+                    </Button>
+                  </Tooltip>
+                </AlertDialog>
               </div>
             </div>
           </div>
