@@ -1,6 +1,10 @@
 "use client";
 
-import { createCourseTag, getCourseTags } from "@/actions/courses";
+import {
+  createCourse,
+  createCourseTag,
+  getCourseTags,
+} from "@/actions/courses";
 import { BackButton } from "@/components/ui/back-button";
 import { Dropzone } from "@/components/ui/dropzone";
 import { Editor } from "@/components/ui/editor";
@@ -23,8 +27,11 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { ModulesList } from "./modules-list";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const CourseForm = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const form = useForm<CreateCourseFormData>({
@@ -58,6 +65,21 @@ export const CourseForm = () => {
       setValue("tagIds", [...tagIds, newTag.id], { shouldValidate: true });
     },
   });
+
+  const { mutate: handleCreateCourse, isPending: isCreatingCourse } =
+    useMutation({
+      mutationFn: createCourse,
+      onSuccess: () => {
+        toast.success("Curso criado com sucesso");
+        router.push("/admin/courses");
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error(
+          "Ocorreu um erro ao criar o curso. Tente novamente mais tarde."
+        );
+      },
+    });
 
   const tagsOptions = useMemo(() => {
     return (tagsData ?? []).map((tag) => ({ label: tag.name, value: tag.id }));
@@ -100,7 +122,19 @@ export const CourseForm = () => {
   };
 
   const onSubmit = async (data: CreateCourseFormData) => {
-    console.log("onSubmit from course-form:", data);
+    const dataWithOrder: CreateCourseFormData = {
+      ...data,
+      modules: data.modules.map((mod, index) => ({
+        ...mod,
+        order: index + 1,
+        lessons: mod.lessons.map((lesson, index) => ({
+          ...lesson,
+          order: index + 1,
+        })),
+      })),
+    };
+
+    handleCreateCourse(dataWithOrder);
   };
 
   return (
@@ -172,7 +206,9 @@ export const CourseForm = () => {
           <Separator className="my-2 col-span-full" />
           <ModulesList />
           <div className="col-span-full flex justify-end">
-            <Button type="submit">Criar curso</Button>
+            <Button type="submit" disabled={isCreatingCourse}>
+              Criar curso
+            </Button>
           </div>
         </form>
       </Form>
