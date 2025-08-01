@@ -25,8 +25,8 @@ export type CreateCourseModulePayload = z.infer<typeof courseModuleSchema>;
 const courseSchema = z.object({
   title: z.string().nonempty({ message: "Titulo é obrigatório" }),
   shortDescription: z.string().optional(),
-  price: z.number().min(1, { message: "Preço é obrigatório" }),
-  discountPrice: z.number().optional(),
+  price: z.coerce.number().min(1, { message: "Preço é obrigatório" }),
+  discountPrice: z.coerce.number().optional(),
   description: z.string().nonempty({ message: "Descrição é obrigatório" }),
   difficulty: z.nativeEnum(CourseDifficulty, {
     message: "Dificuldade é obrigatório",
