@@ -3,7 +3,7 @@ import { FormField } from "./field";
 import { Select } from "../select";
 
 type SelectFieldProps = ComponentProps<typeof FormField> &
-  Omit<ComponentProps<typeof Select>, "onChange">;
+  Omit<ComponentProps<typeof Select>, "onChange" | "value">;
 
 export const SelectField = ({
   name,

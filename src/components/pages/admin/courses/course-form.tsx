@@ -150,7 +150,6 @@ export const CourseForm = () => {
             name="difficulty"
             label="Dificuldade"
             options={difficultyOptions}
-            value={CourseDifficulty.EASY}
           />
           <FormField
             name="thumbnail"
