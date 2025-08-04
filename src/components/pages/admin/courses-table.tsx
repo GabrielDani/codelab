@@ -1,16 +1,19 @@
 "use client";
 
+import { updateCourseStatus } from "@/actions/courses";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Tooltip } from "@/components/ui/tooltip";
 import { formatPrice, formatStatus } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Pencil, Send, Trash } from "lucide-react";
+import { Archive, Pencil, Send, Trash } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 type CoursesTableProps = {
   courses: CourseWithTagsAndModules[];
@@ -18,6 +21,17 @@ type CoursesTableProps = {
 
 export const CoursesTable = ({ courses }: CoursesTableProps) => {
   const [search, setSearch] = useState("");
+
+  const { mutate: handleUpdateCourseStatus, isPending: isUpdatingStatus } =
+    useMutation({
+      mutationFn: updateCourseStatus,
+      onSuccess: () => {
+        toast.success("Status do curso atualizado com sucesso");
+      },
+      onError: () => {
+        toast.error("Erro ao atualizar status do curso");
+      },
+    });
 
   const columns: ColumnDef<CourseWithTagsAndModules>[] = [
     {
@@ -102,11 +116,26 @@ export const CoursesTable = ({ courses }: CoursesTableProps) => {
       accessorKey: "actions",
       cell: ({ row }) => {
         const course = row.original;
+
+        const isPublished = course.status === "PUBLISHED";
+
         return (
           <div className="flex items-center justify-end gap-2">
-            <Tooltip content="Alterar status para publicado">
-              <Button variant="outline" size="icon">
-                <Send />
+            <Tooltip
+              content={`Alterar para ${isPublished ? "Rascunho" : "Publicado"}`}
+            >
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() =>
+                  handleUpdateCourseStatus({
+                    courseId: course.id,
+                    status: isPublished ? "DRAFT" : "PUBLISHED",
+                  })
+                }
+                disabled={isUpdatingStatus}
+              >
+                {isPublished ? <Archive /> : <Send />}
               </Button>
             </Tooltip>
             <Tooltip content="Editar curso">
