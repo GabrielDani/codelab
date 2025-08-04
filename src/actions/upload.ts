@@ -69,12 +69,12 @@ export const uploadFile = async ({ file, path }: UploadFileParams) => {
 };
 
 export const deleteFile = async (url: string) => {
-  const objectKey = url.split(`CLOUDFLARE_FILE_BASE_PATH/`)[1];
+  const objectKey = url.split(`${CLOUDFLARE_FILE_BASE_PATH}/`)[1];
 
-  const command = new DeleteObjectCommand({
+  const cmd = new DeleteObjectCommand({
     Bucket: CLOUDFLARE_R2_BUCKET_NAME,
     Key: objectKey,
   });
 
-  await S3.send(command);
+  await S3.send(cmd);
 };
