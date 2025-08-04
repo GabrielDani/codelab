@@ -150,7 +150,7 @@ export const createCourseTag = async (name: string) => {
 };
 
 export const createCourse = async (rawData: CreateCourseFormData) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const data = createCourseSchema.parse(rawData);
@@ -286,7 +286,7 @@ export const updateCourse = async (rawData: UpdateCourseFormData) => {
 };
 
 export const deleteCourseLessons = async (lessonIds: string[]) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   await prisma.courseLesson.deleteMany({
@@ -299,7 +299,7 @@ export const deleteCourseLessons = async (lessonIds: string[]) => {
 };
 
 export const deleteCourseModules = async (moduleIds: string[]) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   await prisma.courseModule.deleteMany({
@@ -315,7 +315,7 @@ export const createCourseModules = async (
   courseId: string,
   modules: CreateCourseModulePayload[]
 ) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const schema = z.array(courseModuleSchema);
@@ -351,7 +351,7 @@ export const createCourseModules = async (
 export const updateCourseModules = async (
   modules: CreateCourseModulePayload[]
 ) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const schema = z.array(courseModuleSchema);
@@ -399,7 +399,7 @@ export const updateCourseModules = async (
 };
 
 export const revalidateCourseDetails = async (courseId: string) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const course = await prisma.course.findUnique({
@@ -420,7 +420,7 @@ export const updateCourseStatus = async ({
   courseId,
   status,
 }: UpdateCourseStatusPayload) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const course = await prisma.course.update({
@@ -439,7 +439,7 @@ export const updateCourseStatus = async ({
 };
 
 export const deleteCourse = async (courseId: string) => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const course = await prisma.course.findUnique({

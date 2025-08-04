@@ -52,7 +52,7 @@ export async function getUser(
 }
 
 export const getAdminUsers = async (): Promise<AdminUser[]> => {
-  const isAdmin = checkRole("admin");
+  const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
 
   const users = await prisma.user.findMany({
