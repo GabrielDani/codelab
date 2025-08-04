@@ -437,3 +437,27 @@ export const updateCourseStatus = async ({
 
   return course;
 };
+
+export const deleteCourse = async (courseId: string) => {
+  const isAdmin = checkRole("admin");
+  if (!isAdmin) throw new Error("Unauthorized");
+
+  await prisma.course.delete({
+    where: {
+      id: courseId,
+    },
+  });
+
+  const course = await prisma.course.findUnique({
+    where: {
+      id: courseId,
+    },
+  });
+
+  if (!course) throw new Error("");
+
+  deleteFile(course.thumbnail);
+
+  revalidatePath("/");
+  revalidatePath("/admin/courses");
+};

@@ -1,6 +1,7 @@
 "use client";
 
-import { updateCourseStatus } from "@/actions/courses";
+import { deleteCourse, updateCourseStatus } from "@/actions/courses";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -30,6 +31,17 @@ export const CoursesTable = ({ courses }: CoursesTableProps) => {
       },
       onError: () => {
         toast.error("Erro ao atualizar status do curso");
+      },
+    });
+
+  const { mutateAsync: handleDeleteCourse, isPending: isDeletingCourse } =
+    useMutation({
+      mutationFn: deleteCourse,
+      onSuccess: () => {
+        toast.success("Curso deletado com sucesso");
+      },
+      onError: () => {
+        toast.error("Erro ao deletar curso");
       },
     });
 
@@ -145,11 +157,21 @@ export const CoursesTable = ({ courses }: CoursesTableProps) => {
                 </Button>
               </Link>
             </Tooltip>
-            <Tooltip content="Excluir curso">
-              <Button variant="outline" size="icon">
-                <Trash />
-              </Button>
-            </Tooltip>
+            <AlertDialog
+              title="Excluir curso"
+              description="Tem certeza que deseja excluir este curso?"
+              onConfirm={() => handleDeleteCourse(course.id)}
+            >
+              <Tooltip content="Excluir curso">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={isDeletingCourse}
+                >
+                  <Trash />
+                </Button>
+              </Tooltip>
+            </AlertDialog>
           </div>
         );
       },
