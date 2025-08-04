@@ -10,7 +10,7 @@ const courseLessonSchema = z.object({
   order: z.number().min(1, { message: "Ordem é obrigatório" }),
 });
 
-const courseModuleSchema = z.object({
+export const courseModuleSchema = z.object({
   id: z.string(),
   title: z.string().nonempty({ message: "Titulo é obrigatório" }),
   description: z.string().nonempty({ message: "Descrição é obrigatória" }),
