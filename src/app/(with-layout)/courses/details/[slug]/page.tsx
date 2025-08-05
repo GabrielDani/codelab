@@ -18,6 +18,7 @@ import { CourseProgress } from "@/components/pages/courses/course-details/course
 import { BackButton } from "@/components/ui/back-button";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { EditorPreview } from "@/components/ui/editor";
 
 type CourseDetailsPageProps = {
   params: Promise<{ slug: string }>;
@@ -106,7 +107,9 @@ export default async function CourseDetailsPage({
             {course.title}
           </h1>
           {course.shortDescription && (
-            <p className="text-muted-foreground mt-1">{course.description}</p>
+            <p className="text-muted-foreground mt-1">
+              {course.shortDescription}
+            </p>
           )}
           <div className="flex items-center flex-wrap gap-2.5 mt-5">
             {course.tags.map((tag) => (
@@ -135,7 +138,10 @@ export default async function CourseDetailsPage({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="overview">
-            <p className="opacity-90 mt-4">{course.description}</p>
+            <EditorPreview
+              value={course.description}
+              className="opacity-90 mt-4"
+            />
             <Separator className="my-6" />
             <div className="grid grid-cols-2 gap-6">
               {details.map((detail) => (
