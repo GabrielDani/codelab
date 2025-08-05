@@ -12,8 +12,6 @@ export default async function CoursePage({ params }: CoursePageProps) {
 
   const course = await getCourse(slug);
 
-  console.log("course", course);
-
   if (!course) return notFound();
 
   const purchasedCourses = await getPurchasedCourses();
@@ -38,8 +36,6 @@ export default async function CoursePage({ params }: CoursePageProps) {
   if (firstUncompletedLesson) {
     lessonToRedirect = firstUncompletedLesson;
   }
-
-  console.log("lessonToRedirect", lessonToRedirect);
 
   if (lessonToRedirect)
     redirect(
