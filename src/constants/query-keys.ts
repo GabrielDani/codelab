@@ -4,4 +4,5 @@ export const queryKeys = {
   purchasedCourses: ["purchased-courses"],
   courseTags: ["course-tags"],
   notifications: ["notifications"],
+  messages: ["messages"],
 } as const;

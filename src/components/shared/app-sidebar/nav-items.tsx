@@ -1,6 +1,7 @@
 "use client";
 
 import { getPurchasedCourses } from "@/actions/courses";
+import { getMessages } from "@/actions/notifications";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarGroup,
@@ -38,6 +39,11 @@ export const NavItems = () => {
     queryFn: () => getPurchasedCourses(),
   });
 
+  const { data: messages } = useQuery({
+    queryKey: queryKeys.messages,
+    queryFn: () => getMessages(),
+  });
+
   const navItems: NavItem[] = [
     {
       label: "Cursos",
@@ -50,6 +56,15 @@ export const NavItems = () => {
             label: "Meus Cursos",
             path: "/my-courses",
             icon: BookUp2,
+          },
+        ]
+      : []),
+    ...(!!messages?.length
+      ? [
+          {
+            label: "Mensagens",
+            path: "/messages",
+            icon: MessageCircle,
           },
         ]
       : []),
