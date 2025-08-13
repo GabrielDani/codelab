@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-const isHomeRoute = createRouteMatcher(["/"]);
+const isHomeRoute = createRouteMatcher(["/$"]); // path exato
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, sessionClaims } = await auth();

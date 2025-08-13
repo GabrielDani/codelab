@@ -94,6 +94,9 @@ export const getMessages = async (): Promise<Message[]> => {
     where: {
       userId,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return messages ?? [];
