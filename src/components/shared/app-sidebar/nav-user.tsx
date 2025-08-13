@@ -23,14 +23,18 @@ import { BadgeCheck, ChevronsUpDown, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { NotificationsPopover } from "./notifications-popover";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export const NavUser = () => {
   const { user, isLoaded } = useUser();
   const { openUserProfile, signOut } = useClerk();
   const { isMobile, open } = useSidebar();
 
+  const router = useRouter();
+
   const handleSignOut = async () => {
-    await signOut({ redirectUrl: "/" });
+    await signOut();
+    router.push("/");
   };
 
   return (
