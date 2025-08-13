@@ -10,6 +10,9 @@ import {
 } from "@/server/schemas/notifications";
 import { getUser } from "./user";
 
+const SUPERUSER_EMAIL = process.env.SUPERUSER_EMAIL;
+if (!SUPERUSER_EMAIL) throw new Error("SUPERUSER_EMAIL not defined");
+
 export const sendNotifications = async (rawData: CreateNotificationSchema) => {
   const isAdmin = await checkRole("admin");
   if (!isAdmin) throw new Error("Unauthorized");
@@ -64,14 +67,11 @@ export const readAllNotifications = async () => {
 };
 
 export const sendMessageToSuperuser = async (rawData: CreateMessageSchema) => {
-  const superuserEmail = process.env.SUPERUSER_EMAIL;
-  if (!superuserEmail) throw new Error("SUPERUSER_EMAIL not defined");
-
   const data = createMessageSchema.parse(rawData);
 
   const superuser = await prisma.user.findUnique({
     where: {
-      email: process.env.SUPERUSER_EMAIL,
+      email: SUPERUSER_EMAIL,
     },
   });
 
