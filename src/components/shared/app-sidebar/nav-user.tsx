@@ -29,6 +29,10 @@ export const NavUser = () => {
   const { openUserProfile, signOut } = useClerk();
   const { isMobile, open } = useSidebar();
 
+  const handleSignOut = async () => {
+    await signOut({ redirectUrl: "/" });
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -85,11 +89,7 @@ export const NavUser = () => {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      signOut({ redirectUrl: "/" });
-                    }}
-                  >
+                  <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut />
                     Sair
                   </DropdownMenuItem>
