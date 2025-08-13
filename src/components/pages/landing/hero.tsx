@@ -22,7 +22,7 @@ export function Hero() {
         Aprenda do zero até o nível profissional com projetos reais, mentoria e
         suporte. Comece hoje sua jornada como desenvolvedor.
       </h2>
-      <Link href="/" passHref>
+      <Link href="/dashboard" passHref>
         <Button size="lg">
           Veja todos os cursos <ChevronRight />
         </Button>

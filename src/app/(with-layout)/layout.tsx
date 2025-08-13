@@ -24,7 +24,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const pathname = usePathname();
 
-  const isHomePage = pathname === "/";
+  const isDashboardPage = pathname === "/dashboard";
 
   const isCoursePage = /^\/courses\/(?!details\/).+/.test(pathname);
 
@@ -35,12 +35,12 @@ export default function Layout({ children }: LayoutProps) {
         <header
           className={cn(
             "flex h-[70px] shrink-0 border-b items-center px-6 justify-between gap-2",
-            !isHomePage && "md:hidden"
+            !isDashboardPage && "md:hidden"
           )}
         >
           <div className="flex-1 flex items-center gap-4">
             <SidebarTrigger className="flex md:hidden -ml-1" />
-            {isHomePage && (
+            {isDashboardPage && (
               <Suspense>
                 <SearchInput />
               </Suspense>
