@@ -25,6 +25,7 @@ model User {
   lessonComments   LessonComment[]
   purchases        CoursePurchase[]
   notifications    Notification[]
+  messages         Message[]
 
   @@map("users")
 }
@@ -189,4 +190,14 @@ model Notification {
   updatedAt DateTime  @updatedAt
 
   @@map("notifications")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
 }

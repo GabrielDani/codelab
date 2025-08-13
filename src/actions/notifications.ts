@@ -3,6 +3,8 @@
 import { checkRole } from "@/lib/clerk";
 import { prisma } from "@/lib/prisma";
 import {
+  createMessageSchema,
+  CreateMessageSchema,
   createNotificationSchema,
   CreateNotificationSchema,
 } from "@/server/schemas/notifications";
@@ -57,6 +59,30 @@ export const readAllNotifications = async () => {
     },
     data: {
       readAt: new Date(),
+    },
+  });
+};
+
+export const sendMessageToSuperuser = async (rawData: CreateMessageSchema) => {
+  const superuserEmail = process.env.SUPERUSER_EMAIL;
+  if (!superuserEmail) throw new Error("SUPERUSER_EMAIL not defined");
+
+  const data = createMessageSchema.parse(rawData);
+
+  const superuser = await prisma.user.findUnique({
+    where: {
+      email: process.env.SUPERUSER_EMAIL,
+    },
+  });
+
+  if (!superuser) throw new Error("Superuser not found");
+
+  await prisma.message.create({
+    data: {
+      userId: superuser.id,
+      name: data.name,
+      email: data.email,
+      message: data.message,
     },
   });
 };
