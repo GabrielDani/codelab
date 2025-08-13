@@ -56,6 +56,21 @@ export const getCourses = async ({
   return courses;
 };
 
+export const getAllCourses = async (): Promise<Course[]> => {
+  const courses = await prisma.course.findMany({
+    where: {
+      status: "PUBLISHED",
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  if (!courses) return [];
+
+  return courses;
+};
+
 export const getCourse = async (
   query: string,
   queryType: "slug" | "id" = "slug"
