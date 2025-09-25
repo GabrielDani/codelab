@@ -88,7 +88,8 @@ export const sendMessageToSuperuser = async (rawData: CreateMessageSchema) => {
 };
 
 export const getMessages = async (): Promise<Message[]> => {
-  const { userId } = await getUser();
+  const { userId } = await getUser(false);
+  if (!userId) return [];
 
   const messages = await prisma.message.findMany({
     where: {

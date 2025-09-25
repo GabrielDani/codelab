@@ -23,19 +23,11 @@ import { BadgeCheck, ChevronsUpDown, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { NotificationsPopover } from "./notifications-popover";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export const NavUser = () => {
   const { user, isLoaded } = useUser();
-  const { openUserProfile, signOut, isSignedIn } = useClerk();
+  const { openUserProfile, signOut } = useClerk();
   const { isMobile, open } = useSidebar();
-
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isSignedIn) router.push("/");
-  }, [router, isSignedIn]);
 
   const handleSignOut = async () => {
     await signOut();

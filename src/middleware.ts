@@ -1,14 +1,32 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+const blockedForAuth = createRouteMatcher(["/"]);
+const isPublicRoute = createRouteMatcher(["/", "/dashboard", "/auth(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (
-    isAdminRoute(req) &&
-    (await auth()).sessionClaims?.metadata?.role !== "admin"
-  ) {
-    const url = new URL("/", req.url);
+  const session = await auth();
+
+  // Usuário logado não deve acessar "/"
+  if (blockedForAuth(req) && session?.isAuthenticated) {
+    const url = new URL("/dashboard", req.url);
+    return NextResponse.redirect(url);
+  }
+
+  // Usuário não logado → usa helper do Clerk
+  if (!isPublicRoute(req) && !session?.isAuthenticated) {
+    const url = new URL("/dashboard", req.url);
+    return NextResponse.redirect(url);
+  }
+
+  // Usuário logado mas não é admin
+  if (isAdminRoute(req) && session.sessionClaims?.metadata?.role !== "admin") {
+    const url = new URL("/dashboard", req.url);
+    return NextResponse.redirect(url);
+  }
+  if (isAdminRoute(req) && session.sessionClaims?.metadata?.role !== "admin") {
+    const url = new URL("/dashboard", req.url);
     return NextResponse.redirect(url);
   }
 });
